@@ -1,11 +1,21 @@
-# syntax=docker/dockerfile:1
-FROM python:3.11-slim AS base
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+# Use a lightweight Python image
+FROM python:3.11-slim
+
+# Set working directory inside container
 WORKDIR /app
-COPY backend/requirements.txt /app/requirements.txt
+
+# Copy dependency file
+COPY requirements.txt /app/requirements.txt
+
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
-COPY backend/ /app/
+
+# Copy the rest of the backend code
+COPY . /app/
+
+# Expose the port (for example 8000)
 EXPOSE 8000
-# Gunicorn: bind to all interfaces, 3 workers
-CMD ["gunicorn", "--workers", "3", "--bind", "0.0.0.0:8000", "app:app"]
+
+# Run the application
+CMD ["python", "app.py"]
 
